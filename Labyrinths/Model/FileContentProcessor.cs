@@ -2,19 +2,19 @@
 
 public class FileContentProcessor
 {
-    public static string[] RemoveRedundantWhitespaces(string[] fileContent)
+    public static int[][] GetLabyrinthMatrix(string[] fileContent)
     {
-        string[] modifiedContent = new string[fileContent.Length];
-        for (int i = 0; i < fileContent.Length; i++)
+        int[][] labyrinth = new int[fileContent.Length][];
+    for (int i = 0; i < fileContent.Length; i++)
         {
-            modifiedContent[i] = "";
+            labyrinth[i] = new int[fileContent[i].Length/2+1];
             for (int j = 0; j < fileContent[i].Length; j += 2)
             {
-                modifiedContent[i] += fileContent[i][j];
+                labyrinth[i][j/2] = fileContent[i][j]==' '?0:1;
             }
         }
 
-        return modifiedContent;
+        return labyrinth;
     }
     
     

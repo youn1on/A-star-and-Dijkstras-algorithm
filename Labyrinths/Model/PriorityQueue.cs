@@ -7,9 +7,9 @@ public class PriorityQueue : Queue
         
     }
 
-    public void Push(Vertice value)
+    public void Push(Vertice value, int criteria)
     {
-        Node newNode = new Node(value);
+        Node newNode = new Node(value, criteria);
         if (Head == null)
         {
             Head = newNode;
@@ -17,7 +17,8 @@ public class PriorityQueue : Queue
         else
         {
             Node last = Head;
-            while (last.Next != null) last = last.Next;
+            while (last.Next != null || last.Next.Criteria<=newNode.Criteria) last = last.Next;
+            newNode.Next = last.Next;
             last.Next = newNode;
         }
         Count++;
