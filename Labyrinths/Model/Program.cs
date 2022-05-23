@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace Labyrinths.Model
+﻿namespace Labyrinths.Model
 {
     public static class Program
     {

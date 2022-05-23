@@ -1,6 +1,7 @@
-﻿namespace Labyrinths.Model;
-
-public class LabyrinthsGenerator
+﻿namespace Labyrinths.Model
 {
-    
+    public class LabyrinthsGenerator
+    {
+
+    }
 }
