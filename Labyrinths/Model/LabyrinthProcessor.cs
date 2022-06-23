@@ -1,52 +1,72 @@
-﻿namespace Labyrinths.Model
+﻿using System;
+using Labyrinths.Model.Structures;
+
+namespace Labyrinths.Model
 {
     public class LabyrinthProcessor
     {
-        public List<Vertice> GetVerticeList(int[][] labyrinth, int startPointX, int startPointY, int endPointX,
-            int endPointY)
+        public static Vertice[] GetVerticeList(int[][] labyrinth, int[][] dots)
         {
-            List<Vertice> verticeList = new List<Vertice>();
+            Queue<Vertice> verticeList = new Queue<Vertice>();
             for (int i = 1; i < labyrinth.Length - 1; i++)
             {
                 for (int j = 1; j < labyrinth[i].Length - 1; j++)
                 {
                     if (labyrinth[i][j] == 0 && (!IsTunnel(labyrinth, i, j) ||
-                                                 i == startPointX && j == startPointY ||
-                                                 i == endPointX && j == endPointY))
+                                                 i == dots[0][0] && j == dots[0][1] ||
+                                                 i == dots[1][0] && j == dots[1][1]))
                     {
-                        verticeList.Add(new Vertice(i, j));
+                        verticeList.Push(new Vertice(i, j));
                         labyrinth[i][j] = 2;
                     }
                 }
             }
 
-            return verticeList;
+            Vertice[] vertices = new Vertice[verticeList.Count];
+            for (int i = 0; i < vertices.Length; i++) vertices[i] = verticeList.Pop();
+            return vertices;
         }
 
         private static bool IsTunnel(int[][] labyrinth, int i, int j)
         {
-            return labyrinth[i][j - 1] == labyrinth[i][j + 1] && labyrinth[i - 1][j] == labyrinth[i + 1][j] &&
-                   (labyrinth[i][j + 1] != labyrinth[i - 1][j] || labyrinth[i][j + 1] == 1 && labyrinth[i - 1][j] == 1);
+            return labyrinth[i][j - 1] == 1 && labyrinth[i][j + 1] == 1 && labyrinth[i - 1][j] != 1 &&
+                labyrinth[i + 1][j] != 1 || labyrinth[i][j - 1] != 1 && labyrinth[i][j + 1] != 1 &&
+                labyrinth[i - 1][j] == 1 && labyrinth[i + 1][j] == 1;
         }
 
-        public static void SetAdjacent(List<Vertice> vertices, int[][] labyrinth)
+        public static int[][] GetDistances(Vertice[] vertices, int[][] labyrinth)
         {
-            for (int i = 0; i < vertices.Count; i++)
+            int[][] distances = new int[vertices.Length][];
+            for (int i = 0; i < vertices.Length; i++)
+                distances[i] = new int[vertices.Length];
+
+            for (int i = 0; i < vertices.Length; i++)
             {
-                for (int j = i + 1; j < vertices.Count; j++)
+                for (int j = i; j < vertices.Length; j++)
+                {
+                    distances[i][j] = Int32.MaxValue/2;
+                    distances[j][i] = Int32.MaxValue/2;
+                }
+            }
+            
+            for (int i = 0; i < vertices.Length; i++)
+            {
+                
+                for (int j = i + 1; j < vertices.Length; j++)
                 {
                     if (IsAdjacent(vertices[i], vertices[j], labyrinth))
                     {
-                        vertices[i].AdjacentVertices.Add(j);
-                        vertices[j].AdjacentVertices.Add(i);
+                        distances[i][j] = distances[j][i] = GetDistance(vertices[i], vertices[j]);
                     }
                 }
             }
+
+            return distances;
         }
 
         private static bool IsAdjacent(Vertice vertice1, Vertice vertice2, int[][] labyrinth)
         {
-            if (vertice1.X != vertice2.X && vertice1.Y != vertice2.Y)
+            if ((vertice1.X == vertice2.X) == (vertice1.Y == vertice2.Y))
             {
                 return false;
             }
@@ -64,26 +84,29 @@
             return true;
         }
 
-        public static int[][] GetDistanceMatrix(List<Vertice> vertices)
-        {
-            int[][] distanceMatrix = new int[vertices.Count][];
-            for (int i = 0; i < vertices.Count; i++)
-            {
-                distanceMatrix[i] = new int[vertices.Count];
-                foreach (int adjacent in vertices[i].AdjacentVertices)
-                {
-                    if (adjacent < i) continue;
-                    distanceMatrix[i][adjacent] =
-                        distanceMatrix[adjacent][i] = GetDistance(vertices[i], vertices[adjacent]);
-                }
-            }
-
-            return distanceMatrix;
-        }
-
+        
         private static int GetDistance(Vertice vertice1, Vertice vertice2)
         {
             return (int) Math.Sqrt(Math.Pow(vertice1.X - vertice2.X, 2) + Math.Pow(vertice1.Y - vertice2.Y, 2));
+        }
+
+        public static int[] GetEntryPointIndexes(Vertice[] vertices, int[][] coordinates)
+        {
+            int found = 0;
+            int[] indexes = new int[2];
+            for (int i = 0; i < vertices.Length && found < 2; i++)
+            {
+                for (int j = 0; j < 2; j++)
+                {
+                    if (vertices[i].X == coordinates[j][0] && vertices[i].Y == coordinates[j][1])
+                    {
+                        indexes[j] = i;
+                        found++;
+                    }
+                }
+            }
+
+            return indexes;
         }
     }
 }

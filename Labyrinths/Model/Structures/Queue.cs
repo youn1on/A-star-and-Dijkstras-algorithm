@@ -1,4 +1,6 @@
-﻿namespace Labyrinths.Model.Structures
+﻿using System;
+
+namespace Labyrinths.Model.Structures
 {
     public class Queue<T>
     {
@@ -17,7 +19,7 @@
         public virtual void Push(T value)
         {
             Node<T> newNode = new Node<T>(value);
-            if (Head == null)
+            if (Head == null || _tail == null)
             {
                 Head = newNode;
                 _tail = newNode;

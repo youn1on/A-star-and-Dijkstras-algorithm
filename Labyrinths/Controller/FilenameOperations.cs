@@ -1,4 +1,7 @@
-﻿namespace Labyrinths.Controller
+﻿using System;
+using System.IO;
+
+namespace Labyrinths.Controller
 {
     public class FilenameOperations
     {
@@ -7,17 +10,17 @@
             while (true)
             {
                 Console.WriteLine("Enter your filepath or 'exit':");
-                string path = Console.ReadLine();
+                string? path = Console.ReadLine();
                 if (path == "exit") Environment.Exit(0);
-                string validatePath = ValidatePath(path);
+                string? validatePath = ValidatePath(path);
                 if (validatePath != null) return validatePath;
                 Console.WriteLine("Incorrect path: " + path + " not found");
             }
         }
 
-        public static string? ValidatePath(string path)
+        public static string? ValidatePath(string? path)
         {
-            string defaultPath = @"C:\Users\Uni\Desktop\labs 2 semestr\OP\lab 3\Labrinths\Inputs\Labyrinth.txt";
+            string defaultPath = @"C:\Users\Uni\Desktop\labs 2 semestr\OP\lab 3\Labrinths\Inputs\Labyrinth_huge.txt";
             if (path == "" && File.Exists(defaultPath))
             {
                 return defaultPath;

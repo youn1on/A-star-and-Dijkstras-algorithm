@@ -1,8 +1,10 @@
-﻿namespace Labyrinths.Model
+﻿using System;
+
+namespace Labyrinths.Model
 {
     public class AStarEuclidean : DijkstrasAlgorithm
     {
-        public AStarEuclidean(List<Vertice> vertices, int[][] distanceMatrix) : base(vertices, distanceMatrix) { }
+        public AStarEuclidean(Vertice[] vertices, int[][] distanceMatrix) : base(vertices, distanceMatrix) { }
         
         protected override double GetCriteria(Vertice current, Vertice finish)
         {

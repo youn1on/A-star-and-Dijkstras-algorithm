@@ -1,13 +1,14 @@
-﻿using Labyrinths.Model.Structures;
+﻿using System;
+using Labyrinths.Model.Structures;
 
 namespace Labyrinths.Model
 {
     public class DijkstrasAlgorithm
     {
-        protected readonly List<Vertice> Vertices;
+        protected readonly Vertice[] Vertices;
         protected readonly int[][] DistanceMatrix;
 
-        public DijkstrasAlgorithm(List<Vertice> vertices, int[][] distanceMatrix)
+        public DijkstrasAlgorithm(Vertice[] vertices, int[][] distanceMatrix)
         {
             Vertices = vertices;
             DistanceMatrix = distanceMatrix;
@@ -17,25 +18,25 @@ namespace Labyrinths.Model
             PriorityQueue<int> queue = new();
             Vertices[startPointIndex].MinDistance = 0;
             queue.Push(startPointIndex, 0);
-
-
+            
             while (queue.Count > 0)
             {
                 int currentVertice = queue.Pop();
                 if (currentVertice == endPointIndex) return true;
-                foreach (int adjacent in Vertices[currentVertice].AdjacentVertices)
+                for (int i = 0; i<Vertices.Length; i++)
                 {
-                    if (Vertices[adjacent].MinDistance >
-                        Vertices[currentVertice].MinDistance + DistanceMatrix[currentVertice][adjacent])
+                    if (DistanceMatrix[currentVertice][i]==Int32.MaxValue/2) continue;
+                    if (Vertices[i].MinDistance >
+                        Vertices[currentVertice].MinDistance + DistanceMatrix[currentVertice][i])
                     {
-                        Vertices[adjacent].MinDistance =
-                            Vertices[currentVertice].MinDistance + DistanceMatrix[currentVertice][adjacent];
-                        Vertices[adjacent].Previous = currentVertice;
+                        Vertices[i].MinDistance =
+                            Vertices[currentVertice].MinDistance + DistanceMatrix[currentVertice][i];
+                        Vertices[i].Previous = currentVertice;
                     }
 
-                    if (!Vertices[adjacent].Passed)
+                    if (!Vertices[i].Passed)
                     {
-                        queue.Push(adjacent, GetCriteria(Vertices[adjacent], Vertices[endPointIndex]));
+                        queue.Push(i, GetCriteria(Vertices[i], Vertices[endPointIndex]));
                     }
                 }
 
@@ -50,7 +51,7 @@ namespace Labyrinths.Model
             return current.MinDistance;
         }
 
-        public Structures.Stack<int> TraceRoute(int finishIndex)
+        public Stack<int> TraceRoute(int finishIndex)
         {
             Structures.Stack<int> route = new();
             int current = finishIndex;
